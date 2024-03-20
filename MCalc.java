@@ -1,7 +1,18 @@
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
+
 public class MCalc implements RemoteInterface {
 
     @Override
     public double[][] add(double[][] A, double[][] B) throws DimensExcep {
+        String clientIP;
+        try {
+            clientIP = RemoteServer.getClientHost();
+            System.out.println("Client IP: " + clientIP + " used addition");
+        } catch (ServerNotActiveException e) {
+            e.printStackTrace();
+        }
+        
         if (A.length == 0) {
             return new double[0][0];
         }
@@ -45,6 +56,13 @@ public class MCalc implements RemoteInterface {
 
     @Override
     public double[][] sub(double[][] A, double[][] B) throws DimensExcep {
+        String clientIP;
+        try {
+            clientIP = RemoteServer.getClientHost();
+            System.out.println("Client IP: " + clientIP + " used sub");
+        } catch (ServerNotActiveException e) {
+            e.printStackTrace();
+        }
         if (A.length == 0) {
             return new double[0][0];
         }
@@ -88,6 +106,13 @@ public class MCalc implements RemoteInterface {
 
     @Override
     public double[][] multi(double[][] A, double[][] B) throws DimensExcep {
+        String clientIP;
+        try {
+            clientIP = RemoteServer.getClientHost();
+            System.out.println("Client IP: " + clientIP + " used multiplication");
+        } catch (ServerNotActiveException e) {
+            e.printStackTrace();
+        }
         if (0 == A.length || 0 == B.length) {
             throw new DimensExcep("Dimensions do not match multi");
         }
@@ -136,6 +161,13 @@ public class MCalc implements RemoteInterface {
 
     @Override
     public double[][] trans(double[][] A) {
+        String clientIP;
+        try {
+            clientIP = RemoteServer.getClientHost();
+            System.out.println("Client IP: " + clientIP + " used trans");
+        } catch (ServerNotActiveException e) {
+            e.printStackTrace();
+        }
         if (A.length == 0) {
             return A;
         }

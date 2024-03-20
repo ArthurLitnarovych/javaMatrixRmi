@@ -1,55 +1,30 @@
 import java.net.MalformedURLException;
-import java.rmi.Naming;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-public class Server extends UnicastRemoteObject implements RemoteInterface {
-    protected RemoteInterface calc;
-    Server(RemoteInterface calculator) throws RemoteException {
+public class Server extends UnicastRemoteObject implements Remote {
+    public static final int PORT = 2099;
+    public static final String HOST = "207.154.236.239";
+
+    Server() throws RemoteException {
         super();
-        this.calc = calculator;
-    }
-
-    @Override
-    public double[][] add(double[][] A, double[][] B) throws RemoteException {
-        try {
-            return this.calc.add(A, B);
-        } catch (DimensExcep e) {
-            throw new RemoteException(e.getMessage());
-        }
-    }
-
-    @Override
-    public double[][] sub(double[][] A, double[][] B) throws RemoteException {
-        try {
-            return this.calc.sub(A, B);
-        } catch (DimensExcep e) {
-            throw new RemoteException(e.getMessage());
-        }
-    }
-
-    @Override
-    public double[][] multi(double[][] A, double[][] B) throws RemoteException {
-        try {
-            return this.calc.multi(A, B);
-        } catch (DimensExcep e) {
-            throw new RemoteException(e.getMessage());
-        }
-    }
-
-    @Override
-    public double[][] trans(double[][] A) throws RemoteException {
-        return this.calc.trans(A);
     }
 
     public static void main(String[] args) throws RemoteException, MalformedURLException {
         System.out.println("Init. remote calc...");
 
-        RemoteInterface service = new MCalc();
+        MCalc service = new MCalc();
 
-        Server server = new Server(service);
-        String serviceName = "rmi://localhost/Server";
-        Naming.rebind(serviceName, server);
-        System.out.println("Server is ready...");
+        LocateRegistry.createRegistry(Server.PORT);
+        Registry registry = LocateRegistry.getRegistry(Server.HOST, Server.PORT);
+        Remote remServer = UnicastRemoteObject.exportObject(service, Server.PORT);
+
+        String serviceName = "Server";
+        registry.rebind(serviceName, remServer);
+
+        System.out.println("Server is ready!");
     } 
 }
